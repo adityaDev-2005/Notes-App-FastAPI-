@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0c0c0e;
+      --surface: #13131a;
+      --surface2: #1a1a24;
+      --border: #222230;
+      --accent: #c9a96e;
+      --accent2: #7b6ee8;
+      --text: #e9e4f0;
+      --text-muted: #5a5670;
+      --text-soft: #9990b8;
+      --danger: #e05c6a;
+      --success: #5ec48a;
+      --radius: 6px;
+      --glow: 0 0 24px rgba(201,169,110,0.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ══════════════════════════════════════
+       LOGIN PAGE
+    ══════════════════════════════════════ */
+    #loginPage {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      z-index: 100;
+      transition: opacity 0.5s, transform 0.5s;
+    }
+
+    #loginPage.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-20px);
+    }
+
+    .login-bg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .login-bg::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      left: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(123,110,232,0.07) 0%, transparent 70%);
+      animation: drift1 12s ease-in-out infinite alternate;
+    }
+
+    .login-bg::after {
+      content: '';
+      position: absolute;
+      bottom: -200px;
+      right: -100px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(201,169,110,0.07) 0%, transparent 70%);
+      animation: drift2 10s ease-in-out infinite alternate;
+    }
+
+    @keyframes drift1 { from { transform: translate(0,0); } to { transform: translate(60px, 40px); } }
+    @keyframes drift2 { from { transform: translate(0,0); } to { transform: translate(-40px, -60px); } }
+
+    .login-card {
+      position: relative;
+      z-index: 1;
+      width: 380px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px 40px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5), var(--glow);
+      animation: fadeUp 0.6s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.6rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+      line-height: 1;
+    }
+
+    .login-logo span { color: var(--accent); }
+
+    .login-tagline {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 36px;
+    }
+
+    .login-tabs {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 3px;
+      margin-bottom: 28px;
+    }
+
+    .login-tab {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .login-tab.active {
+      background: var(--accent);
+      color: #0c0c0e;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .field input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 11px 14px;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.82rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .field input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(201,169,110,0.1);
+    }
+
+    .btn-login {
+      width: 100%;
+      background: var(--accent);
+      color: #0c0c0e;
+      border: none;
+      border-radius: var(--radius);
+      padding: 12px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn-login:hover { background: #dfc07e; }
+    .btn-login:active { transform: scale(0.98); }
+
+    .login-error {
+      font-size: 0.7rem;
+      color: var(--danger);
+      margin-top: 12px;
+      text-align: center;
+      min-height: 18px;
+      letter-spacing: 0.04em;
+    }
+
+    .login-footer {
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      text-align: center;
+      letter-spacing: 0.06em;
+    }
+
+    /* ══════════════════════════════════════
+       APP PAGE
+    ══════════════════════════════════════ */
+    #appPage {
+      display: none;
+      flex-direction: column;
+      height: 100vh;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    #appPage.visible {
+      display: flex;
+      opacity: 1;
+    }
+
+    /* ── Header ── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .header-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .header-logo span { color: var(--accent); }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.72rem;
+      color: var(--text-soft);
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: white;
+    }
+
+    .btn-logout {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: var(--radius);
+      padding: 5px 12px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
+
+    /* ── Layout ── */
+    .layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    .sidebar-top {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-new {
+      width: 100%;
+      background: var(--accent);
+      color: #0c0c0e;
+      border: none;
+      border-radius: var(--radius);
+      padding: 10px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: background 0.15s;
+    }
+
+    .btn-new:hover { background: #dfc07e; }
+
+    .search-wrap {
+      position: relative;
+    }
+
+    .search-wrap input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 14px 8px 32px;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      transition: border-color 0.15s;
+    }
+
+    .search-wrap input:focus { outline: none; border-color: var(--accent); }
+    .search-wrap input::placeholder { color: var(--text-muted); }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      pointer-events: none;
+    }
+
+    .notes-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 0;
+    }
+
+    .notes-list::-webkit-scrollbar { width: 3px; }
+    .notes-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .section-label {
+      padding: 10px 16px 4px;
+      font-size: 0.58rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .note-item {
+      padding: 12px 16px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background 0.1s, border-color 0.1s;
+      position: relative;
+    }
+
+    .note-item:hover { background: var(--surface2); }
+    .note-item.active { background: var(--surface2); border-left-color: var(--accent); }
+
+    .note-item-title {
+      font-size: 0.78rem;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 3px;
+      padding-right: 44px;
+    }
+
+    .note-item.pinned .note-item-title::before {
+      content: '📌 ';
+      font-size: 0.65rem;
+    }
+
+    .note-item-meta {
+      font-size: 0.64rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-right: 44px;
+    }
+
+    .item-actions {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      gap: 2px;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    .note-item:hover .item-actions { opacity: 1; }
+
+    .item-actions button {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.78rem;
+      padding: 4px 5px;
+      border-radius: 3px;
+      transition: color 0.1s, background 0.1s;
+    }
+
+    .item-actions .pin-btn:hover { color: var(--accent); background: rgba(201,169,110,0.1); }
+    .item-actions .edit-btn:hover { color: var(--accent2); background: rgba(123,110,232,0.1); }
+    .item-actions .delete-btn:hover { color: var(--danger); background: rgba(224,92,106,0.1); }
+
+    /* ── Main ── */
+    .main {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    /* ── Form ── */
+    .note-form {
+      border-bottom: 1px solid var(--border);
+      padding: 24px 48px;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--surface);
+      animation: slideDown 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .note-form.visible { display: flex; }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-mode-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .form-hint {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .note-form label {
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .note-form input,
+    .note-form textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.82rem;
+      resize: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .note-form input:focus,
+    .note-form textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(201,169,110,0.08);
+    }
+
+    .note-form textarea { height: 110px; }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .autosave-indicator {
+      font-size: 0.62rem;
+      color: var(--success);
+      margin-right: auto;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .autosave-indicator.show { opacity: 1; }
+
+    .btn-save {
+      background: var(--accent);
+      color: #0c0c0e;
+      border: none;
+      border-radius: var(--radius);
+      padding: 8px 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn-save:hover { background: #dfc07e; }
+    .btn-save:active { transform: scale(0.97); }
+
+    .btn-cancel {
+      background: none;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 16px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .btn-cancel:hover { border-color: var(--text-soft); color: var(--text); }
+
+    /* ── Note viewer ── */
+    .note-viewer {
+      flex: 1;
+      padding: 52px 64px;
+      overflow-y: auto;
+    }
+
+    .note-viewer::-webkit-scrollbar { width: 3px; }
+    .note-viewer::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .empty-state {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      color: var(--text-muted);
+    }
+
+    .empty-state .icon {
+      font-size: 3rem;
+      opacity: 0.15;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .empty-state p { font-size: 0.72rem; letter-spacing: 0.08em; }
+
+    .note-view-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      gap: 20px;
+    }
+
+    .note-view-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.8rem;
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .view-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+
+    .btn-view-action {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: var(--radius);
+      padding: 6px 12px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-view-action:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-view-action.danger:hover { border-color: var(--danger); color: var(--danger); }
+
+    .note-view-timestamp {
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+      margin-bottom: 24px;
+    }
+
+    .note-view-divider {
+      width: 48px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      margin-bottom: 32px;
+    }
+
+    .note-view-content {
+      font-size: 0.9rem;
+      line-height: 2;
+      white-space: pre-wrap;
+      color: var(--text-soft);
+    }
+
+    /* ── Delete confirm dialog ── */
+    .dialog-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .dialog-overlay.show { opacity: 1; pointer-events: all; }
+
+    .dialog {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      width: 340px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+      transform: scale(0.95);
+      transition: transform 0.2s;
+    }
+
+    .dialog-overlay.show .dialog { transform: scale(1); }
+
+    .dialog h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+
+    .dialog p {
+      font-size: 0.75rem;
+      color: var(--text-soft);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .dialog-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn-confirm-delete {
+      background: var(--danger);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      padding: 8px 18px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-confirm-delete:hover { background: #f06070; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      color: var(--text);
+      padding: 12px 18px;
+      border-radius: var(--radius);
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      z-index: 300;
+      max-width: 280px;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.error { border-left-color: var(--danger); }
+    .toast.success { border-left-color: var(--success); }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      border-top: 1px solid var(--border);
+      padding: 8px 64px;
+      display: flex;
+      gap: 24px;
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+
+    .stat {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .stat span { color: var(--text-soft); }
+  </style>
+</head>
+<body>
+
+<!-- ══ LOGIN PAGE ══ -->
+<div id="loginPage">
+  <div class="login-bg"></div>
+  <div class="login-card">
+    <div class="login-logo">Not<span>es</span></div>
+    <div class="login-tagline">your personal notebook</div>
+
+    <div class="login-tabs">
+      <button class="login-tab active" onclick="switchTab('login')">Sign In</button>
+      <button class="login-tab" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <div id="loginForm">
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="loginUser" placeholder="Enter username..." autocomplete="username" />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="loginPass" placeholder="Enter password..." autocomplete="current-password" />
+      </div>
+      <button class="btn-login" onclick="doLogin()">Sign In →</button>
+    </div>
+
+    <div id="registerForm" style="display:none">
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="regUser" placeholder="Choose a username..." />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="regPass" placeholder="Choose a password..." />
+      </div>
+      <div class="field">
+        <label>Confirm Password</label>
+        <input type="password" id="regPass2" placeholder="Repeat password..." />
+      </div>
+      <button class="btn-login" onclick="doRegister()">Create Account →</button>
+    </div>
+
+    <div class="login-error" id="loginError"></div>
+
+    <div class="login-footer">
+      ✦ &nbsp; stored locally &nbsp; · &nbsp; no tracking &nbsp; · &nbsp; just notes
+    </div>
+  </div>
+</div>
+
+<!-- ══ APP PAGE ══ -->
+<div id="appPage">
+  <header>
+    <div class="header-left">
+      <div class="header-logo">Not<span>es</span></div>
+    </div>
+    <div class="header-right">
+      <div class="user-chip">
+        <div class="user-avatar" id="userAvatar">A</div>
+        <span id="userLabel">user</span>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <button class="btn-new" onclick="openAddForm()">+ New Note</button>
+        <div class="search-wrap">
+          <span class="search-icon">⌕</span>
+          <input type="text" id="searchInput" placeholder="Search notes..." oninput="handleSearch()" />
+        </div>
+      </div>
+      <div class="notes-list" id="notesList">
+        <div style="padding:20px 16px;font-size:0.7rem;color:var(--text-muted)">loading...</div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="note-form" id="noteForm">
+        <div class="form-header">
+          <div class="form-mode-label" id="formModeLabel">New Note</div>
+          <div class="form-hint">Ctrl+Enter to save &nbsp;·&nbsp; Esc to cancel</div>
+        </div>
+        <div>
+          <label>Title</label>
+          <input type="text" id="titleInput" placeholder="Give your note a title..." />
+        </div>
+        <div>
+          <label>Content</label>
+          <textarea id="contentInput" placeholder="Start writing..."></textarea>
+        </div>
+        <div class="form-actions">
+          <div class="autosave-indicator" id="autosaveIndicator">✓ draft saved</div>
+          <button class="btn-cancel" onclick="closeForm()">Cancel</button>
+          <button class="btn-save" id="saveBtn" onclick="submitForm()">Save Note</button>
+        </div>
+      </div>
+
+      <div class="note-viewer" id="noteViewer">
+        <div class="empty-state">
+          <div class="icon">✦</div>
+          <p>Select a note or create a new one</p>
+        </div>
+      </div>
+
+      <div class="stats-bar" id="statsBar" style="display:none">
+        <div class="stat">Words: <span id="statWords">0</span></div>
+        <div class="stat">Characters: <span id="statChars">0</span></div>
+        <div class="stat">Lines: <span id="statLines">0</span></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Delete Confirm Dialog -->
+<div class="dialog-overlay" id="deleteDialog">
+  <div class="dialog">
+    <h3>Delete Note?</h3>
+    <p>This action cannot be undone. The note will be permanently removed.</p>
+    <div class="dialog-actions">
+      <button class="btn-cancel" onclick="closeDeleteDialog()">Cancel</button>
+      <button class="btn-confirm-delete" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const API = 'http://127.0.0.1:8000';
+  let notes = [];
+  let activeId = null;
+  let editingId = null;
+  let deleteTargetId = null;
+  let currentUser = null;
+  let autosaveTimer = null;
+  let searchTimer = null;
+
+  /* ══════════════════════════════════════
+     AUTH (localStorage-based, simple)
+  ══════════════════════════════════════ */
+  function getUsers() {
+    return JSON.parse(localStorage.getItem('notes_users') || '{}');
+  }
+
+  function saveUsers(u) {
+    localStorage.setItem('notes_users', JSON.stringify(u));
+  }
+
+  function switchTab(tab) {
+    document.querySelectorAll('.login-tab').forEach((t,i) => {
+      t.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'register' && i === 1));
+    });
+    document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+    document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+    document.getElementById('loginError').textContent = '';
+  }
+
+  function doLogin() {
+    const user = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value;
+    const users = getUsers();
+
+    if (!user || !pass) { setLoginError('Please fill in all fields.'); return; }
+    if (!users[user]) { setLoginError('User not found.'); return; }
+    if (users[user] !== btoa(pass)) { setLoginError('Incorrect password.'); return; }
+
+    loginSuccess(user);
+  }
+
+  function doRegister() {
+    const user = document.getElementById('regUser').value.trim();
+    const pass = document.getElementById('regPass').value;
+    const pass2 = document.getElementById('regPass2').value;
+    const users = getUsers();
+
+    if (!user || !pass) { setLoginError('Please fill in all fields.'); return; }
+    if (pass !== pass2) { setLoginError('Passwords do not match.'); return; }
+    if (pass.length < 4) { setLoginError('Password must be at least 4 characters.'); return; }
+    if (users[user]) { setLoginError('Username already taken.'); return; }
+
+    users[user] = btoa(pass);
+    saveUsers(users);
+    loginSuccess(user);
+  }
+
+  function setLoginError(msg) {
+    document.getElementById('loginError').textContent = msg;
+  }
+
+  function loginSuccess(user) {
+    currentUser = user;
+    sessionStorage.setItem('notes_session', user);
+    document.getElementById('userLabel').textContent = user;
+    document.getElementById('userAvatar').textContent = user[0].toUpperCase();
+    document.getElementById('loginPage').classList.add('hidden');
+    setTimeout(() => {
+      document.getElementById('appPage').style.display = 'flex';
+      setTimeout(() => document.getElementById('appPage').classList.add('visible'), 10);
+    }, 300);
+    loadNotes();
+  }
+
+  function doLogout() {
+    sessionStorage.removeItem('notes_session');
+    currentUser = null;
+    notes = [];
+    activeId = null;
+    document.getElementById('appPage').classList.remove('visible');
+    setTimeout(() => {
+      document.getElementById('appPage').style.display = 'none';
+      document.getElementById('loginPage').classList.remove('hidden');
+      document.getElementById('loginUser').value = '';
+      document.getElementById('loginPass').value = '';
+      document.getElementById('loginError').textContent = '';
+    }, 400);
+  }
+
+  // Auto-login from session
+  window.addEventListener('load', () => {
+    const saved = sessionStorage.getItem('notes_session');
+    if (saved) loginSuccess(saved);
+  });
+
+  /* ══════════════════════════════════════
+     NOTES
+  ══════════════════════════════════════ */
+  async function loadNotes() {
+    try {
+      const res = await fetch(`${API}/notes`);
+      notes = await res.json();
+      renderList();
+    } catch (e) {
+      document.getElementById('notesList').innerHTML =
+        '<div style="padding:16px;font-size:0.7rem;color:#e05c6a;line-height:1.8">Cannot reach backend.<br>Make sure FastAPI is running on port 8000.</div>';
+    }
+  }
+
+  function renderList(filtered) {
+    const list = document.getElementById('notesList');
+    const display = filtered || notes;
+
+    if (!display.length) {
+      list.innerHTML = filtered
+        ? '<div style="padding:16px;font-size:0.7rem;color:var(--text-muted)">No results found.</div>'
+        : '<div style="padding:16px;font-size:0.7rem;color:var(--text-muted)">No notes yet.</div>';
+      return;
+    }
+
+    const pinned = display.filter(n => n.pinned);
+    const regular = display.filter(n => !n.pinned);
+
+    let html = '';
+
+    if (pinned.length) {
+      html += '<div class="section-label">Pinned</div>';
+      html += pinned.map(n => noteItemHTML(n)).join('');
+    }
+
+    if (regular.length) {
+      if (pinned.length) html += '<div class="section-label">Notes</div>';
+      html += regular.map(n => noteItemHTML(n)).join('');
+    }
+
+    list.innerHTML = html;
+  }
+
+  function noteItemHTML(n) {
+    const date = n.updated_at || n.created_at;
+    const dateStr = date ? formatDate(date) : '';
+    return `
+      <div class="note-item ${n.pinned ? 'pinned' : ''} ${n.id === activeId ? 'active' : ''}" onclick="viewNote(${n.id})">
+        <div class="note-item-title">${escHtml(n.title)}</div>
+        <div class="note-item-meta">${dateStr}</div>
+        <div class="item-actions">
+          <button class="pin-btn" onclick="togglePin(event,${n.id})" title="${n.pinned ? 'Unpin' : 'Pin'}">${n.pinned ? '★' : '☆'}</button>
+          <button class="edit-btn" onclick="openEditForm(event,${n.id})" title="Edit">✎</button>
+          <button class="delete-btn" onclick="openDeleteDialog(event,${n.id})" title="Delete">✕</button>
+        </div>
+      </div>`;
+  }
+
+  function viewNote(id) {
+    activeId = id;
+    renderList();
+    const note = notes.find(n => n.id === id);
+    if (!note) return;
+
+    const date = note.updated_at || note.created_at;
+    const words = note.content.trim().split(/\s+/).filter(Boolean).length;
+    const chars = note.content.length;
+    const lines = note.content.split('\n').length;
+
+    document.getElementById('noteViewer').innerHTML = `
+      <div class="note-view-header">
+        <div class="note-view-title">${escHtml(note.title)}</div>
+        <div class="view-actions">
+          <button class="btn-view-action" onclick="openEditForm(null,${note.id})">✎ Edit</button>
+          <button class="btn-view-action danger" onclick="openDeleteDialog(null,${note.id})">✕ Delete</button>
+        </div>
+      </div>
+      <div class="note-view-timestamp">${date ? 'Last edited ' + formatDate(date) : ''}</div>
+      <div class="note-view-divider"></div>
+      <div class="note-view-content">${escHtml(note.content)}</div>
+    `;
+
+    document.getElementById('statsBar').style.display = 'flex';
+    document.getElementById('statWords').textContent = words;
+    document.getElementById('statChars').textContent = chars;
+    document.getElementById('statLines').textContent = lines;
+  }
+
+  /* ── Search ── */
+  function handleSearch() {
+    clearTimeout(searchTimer);
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    searchTimer = setTimeout(() => {
+      if (!q) { renderList(); return; }
+      const filtered = notes.filter(n =>
+        n.title.toLowerCase().includes(q) || n.content.toLowerCase().includes(q)
+      );
+      renderList(filtered);
+    }, 200);
+  }
+
+  /* ── Form ── */
+  function openAddForm() {
+    editingId = null;
+    document.getElementById('formModeLabel').textContent = 'New Note';
+    document.getElementById('saveBtn').textContent = 'Save Note';
+    document.getElementById('titleInput').value = '';
+    document.getElementById('contentInput').value = '';
+    document.getElementById('noteForm').classList.add('visible');
+    document.getElementById('titleInput').focus();
+    setupAutosave();
+  }
+
+  function openEditForm(e, id) {
+    if (e) e.stopPropagation();
+    const note = notes.find(n => n.id === id);
+    if (!note) return;
+
+    editingId = id;
+    document.getElementById('formModeLabel').textContent = 'Edit Note';
+    document.getElementById('saveBtn').textContent = 'Update Note';
+    document.getElementById('titleInput').value = note.title;
+    document.getElementById('contentInput').value = note.content;
+    document.getElementById('noteForm').classList.add('visible');
+    document.getElementById('titleInput').focus();
+    setupAutosave();
+  }
+
+  function closeForm() {
+    editingId = null;
+    clearTimeout(autosaveTimer);
+    document.getElementById('noteForm').classList.remove('visible');
+    document.getElementById('autosaveIndicator').classList.remove('show');
+  }
+
+  /* ── Autosave draft to localStorage ── */
+  function setupAutosave() {
+    const title = document.getElementById('titleInput');
+    const content = document.getElementById('contentInput');
+    const indicator = document.getElementById('autosaveIndicator');
+
+    [title, content].forEach(el => {
+      el.addEventListener('input', () => {
+        clearTimeout(autosaveTimer);
+        autosaveTimer = setTimeout(() => {
+          localStorage.setItem('notes_draft', JSON.stringify({
+            title: title.value, content: content.value
+          }));
+          indicator.classList.add('show');
+          setTimeout(() => indicator.classList.remove('show'), 1500);
+        }, 800);
+      });
+    });
+  }
+
+  async function submitForm() {
+    const title = document.getElementById('titleInput').value.trim();
+    const content = document.getElementById('contentInput').value.trim();
+
+    if (!title) { showToast('Title is required.', 'error'); return; }
+    if (!content) { showToast('Content is required.', 'error'); return; }
+
+    if (editingId !== null) {
+      try {
+        const res = await fetch(`${API}/notes/${editingId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, content })
+        });
+        const updated = await res.json();
+        notes = notes.map(n => n.id === editingId ? updated : n);
+        closeForm();
+        viewNote(editingId);
+        showToast('Note updated.', 'success');
+      } catch { showToast('Failed to update note.', 'error'); }
+    } else {
+      try {
+        const res = await fetch(`${API}/notes`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, content })
+        });
+        const newNote = await res.json();
+        notes.push(newNote);
+        localStorage.removeItem('notes_draft');
+        closeForm();
+        viewNote(newNote.id);
+        renderList();
+        showToast('Note saved.', 'success');
+      } catch { showToast('Failed to save note.', 'error'); }
+    }
+  }
+
+  /* ── Pin ── */
+  async function togglePin(e, id) {
+    e.stopPropagation();
+    try {
+      const res = await fetch(`${API}/notes/${id}/pin`, { method: 'PATCH' });
+      const updated = await res.json();
+      notes = notes.map(n => n.id === id ? updated : n);
+      renderList();
+      if (activeId === id) viewNote(id);
+      showToast(updated.pinned ? 'Note pinned.' : 'Note unpinned.', 'success');
+    } catch { showToast('Failed to pin note.', 'error'); }
+  }
+
+  /* ── Delete dialog ── */
+  function openDeleteDialog(e, id) {
+    if (e) e.stopPropagation();
+    deleteTargetId = id;
+    document.getElementById('deleteDialog').classList.add('show');
+  }
+
+  function closeDeleteDialog() {
+    deleteTargetId = null;
+    document.getElementById('deleteDialog').classList.remove('show');
+  }
+
+  async function confirmDelete() {
+    const id = deleteTargetId;
+    closeDeleteDialog();
+    try {
+      await fetch(`${API}/notes/${id}`, { method: 'DELETE' });
+      notes = notes.filter(n => n.id !== id);
+      if (activeId === id) {
+        activeId = null;
+        document.getElementById('noteViewer').innerHTML = `
+          <div class="empty-state">
+            <div class="icon">✦</div>
+            <p>Select a note or create a new one</p>
+          </div>`;
+        document.getElementById('statsBar').style.display = 'none';
+      }
+      renderList();
+      showToast('Note deleted.', 'success');
+    } catch { showToast('Failed to delete note.', 'error'); }
+  }
+
+  /* ── Helpers ── */
+  function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    if (isNaN(d)) return '';
+    const now = new Date();
+    const diff = Math.floor((now - d) / 1000);
+    if (diff < 60) return 'just now';
+    if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  let toastTimer;
+  function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast show ${type}`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  document.addEventListener('keydown', e => {
+    const formOpen = document.getElementById('noteForm').classList.contains('visible');
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && formOpen) submitForm();
+    if (e.key === 'Escape') {
+      if (document.getElementById('deleteDialog').classList.contains('show')) closeDeleteDialog();
+      else if (formOpen) closeForm();
+    }
+  });
+
+  document.getElementById('deleteDialog').addEventListener('click', e => {
+    if (e.target === document.getElementById('deleteDialog')) closeDeleteDialog();
+  });
+</script>
+</body>
+</html>
