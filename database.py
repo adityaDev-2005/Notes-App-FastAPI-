@@ -11,5 +11,6 @@ session = sessionmaker(
     autoflush=False,
     bind=engine
 )
+Base = declarative_base()
 
 # this file allows my app to talk to my database
