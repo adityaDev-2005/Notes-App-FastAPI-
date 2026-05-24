@@ -19,7 +19,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "http://0.0.0.0:3000"],
     allow_methods=["*"],
     allow_headers=["*"],
     allow_credentials=True
@@ -149,3 +149,81 @@ def delete_note(
     return{
         "message":"Note not found"
     }
+
+## to edit the notes
+@app.put("/notes/{id}")
+def update_note(
+    id: int,
+    note: Note,
+    db: Session = Depends(get_db)
+):
+    db_note = db.query(
+        database_models.Note
+    ).filter(
+        database_models.Note.id == id
+    ).first()
+
+    if db_note:
+        db_note.title = note.title
+        db_note.content = note.content
+        db.commit()
+        db.refresh(db_note)
+        return db_note
+
+    return {"message": "Note not found"}
+
+
+
+@app.put("/notes/{id}")
+def update_note(
+    id: int,
+    note: Note,
+    db: Session = Depends(get_db)
+):
+    db_note = db.query(
+        database_models.Note
+    ).filter(
+        database_models.Note.id == id
+    ).first()
+
+    if db_note:
+        db_note.title = note.title
+        db_note.content = note.content
+        db.commit()
+        db.refresh(db_note)
+        return db_note
+
+    return {"message": "Note not found"}
+
+
+@app.patch("/notes/{id}/pin")
+def toggle_pin(
+    id: int,
+    db: Session = Depends(get_db)
+):
+    db_note = db.query(
+        database_models.Note
+    ).filter(
+        database_models.Note.id == id
+    ).first()
+
+    if db_note:
+        db_note.pinned = not db_note.pinned
+        db.commit()
+        db.refresh(db_note)
+        return db_note
+
+    return {"message": "Note not found"}
+
+
+@app.get("/notes/search/{keyword}")
+def search_notes(
+    keyword: str,
+    db: Session = Depends(get_db)
+):
+    return db.query(
+        database_models.Note
+    ).filter(
+        database_models.Note.title.ilike(f"%{keyword}%") |
+        database_models.Note.content.ilike(f"%{keyword}%")
+    ).all()
